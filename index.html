@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tbilisi — Basel</title>
+    <link rel="preload" href="assets/fonts/figtree-500.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main class="stage" id="stage">
+      <!-- Everything inside .scene stays hidden until Play is pressed. -->
+      <div class="scene" id="scene">
+        <!-- Snowballs are added here by js/main.js -->
+        <div class="snow" id="snow" aria-hidden="true"></div>
+
+        <svg
+          class="art"
+          viewBox="0 0 2000 1120"
+          preserveAspectRatio="xMidYMax meet"
+          role="img"
+          aria-label="A dotted mountain line between two people, one in Tbilisi and one in Basel"
+        >
+          <defs>
+            <!-- The mask uncovers the dotted line from left to right. -->
+            <mask id="reveal" maskUnits="userSpaceOnUse" x="0" y="0" width="2000" height="1120">
+              <path id="reveal-path" class="reveal-path" pathLength="1" />
+            </mask>
+          </defs>
+
+          <path id="ridge" class="ridge" mask="url(#reveal)" />
+
+          <!-- Photos that appear while the figures climb (frames measured from the design). -->
+          <g class="pics" id="pics">
+            <image class="pic" data-who="ana" data-at="380" href="assets/pic1.jpg" x="506" y="819" width="135" height="178" preserveAspectRatio="xMidYMid slice" />
+            <image class="pic" data-who="ana" data-at="620" href="assets/pic4.jpg" x="724" y="719" width="170" height="158" preserveAspectRatio="xMidYMax slice" />
+            <image class="pic" data-who="nika" data-at="1180" data-last="true" href="assets/pic6.jpg" x="991" y="368" width="153" height="200" preserveAspectRatio="xMidYMid slice" />
+
+            <image class="pic" data-who="nika" data-at="1700" href="assets/pic2.jpg" x="1401" y="778" width="168" height="218" preserveAspectRatio="xMidYMid slice" />
+            <image class="pic" data-who="nika" data-at="1460" href="assets/pic3.jpg" x="1133" y="830" width="202" height="144" preserveAspectRatio="xMidYMid slice" />
+            <image class="pic" data-who="nika" data-at="1260" href="assets/pic5.jpg" x="1054" y="596" width="152" height="193" preserveAspectRatio="xMidYMid slice" />
+          </g>
+
+          <!-- Both figures can be dragged along the mountain line. (0,0) is where their feet touch it. -->
+          <g
+            class="figure"
+            id="fig-ana"
+            transform="translate(140.4 989.3)"
+            role="slider"
+            tabindex="0"
+            aria-label="Ana. Drag her up the mountain"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+          >
+            <image class="person person-ana" href="assets/ana.png" x="-52.55" y="-205.6" width="105.1" height="205.6" />
+            <rect class="hit" x="-64" y="-216" width="128" height="228" rx="10" />
+          </g>
+          <g
+            class="figure"
+            id="fig-nika"
+            transform="translate(1821.1 967.3)"
+            role="slider"
+            tabindex="0"
+            aria-label="Nika. Drag him up the mountain"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+          >
+            <image class="person person-nika" href="assets/nika.png" x="-57.95" y="-210.8" width="115.9" height="210.8" />
+            <rect class="hit" x="-70" y="-222" width="140" height="234" rx="10" />
+          </g>
+
+          <!-- Small hints next to the figures. -->
+          <text class="hint" id="hint-ana" x="206" y="800" text-anchor="start">drag</text>
+          <text class="hint" id="hint-nika" x="1752" y="846" text-anchor="end">drag</text>
+
+          <!-- Shown when both of them reach the top. -->
+          <image
+            class="couple"
+            id="couple"
+            href="assets/couple.png"
+            x="975.9"
+            y="163"
+            width="198"
+            height="185"
+          />
+          <g transform="translate(1037 117) scale(1.6)">
+            <path
+              class="heart"
+              id="heart"
+              d="M16 28C16 28 2 18.6 2 9.6C2 4.8 5.6 2 9.4 2C12.2 2 14.8 3.6 16 6.2C17.2 3.6 19.8 2 22.6 2C26.4 2 30 4.8 30 9.6C30 18.6 16 28 16 28Z"
+            />
+          </g>
+        </svg>
+      </div>
+
+      <!-- Film canister: appears 5 s after the heart, glides to the left and invites a pull. -->
+      <div class="film" id="film" aria-hidden="true">
+        <svg class="art" id="film-svg" viewBox="0 37 2000 1120" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <clipPath id="strip-clip"><rect x="404" y="0" width="1596" height="1120" /></clipPath>
+            <!-- 25 perforations of the strip, repeated to make it as long as needed. -->
+            <pattern id="film-pat" patternUnits="userSpaceOnUse" x="-689.3" y="329.4" width="956.8" height="474.6">
+              <image href="assets/film-tile.png" x="0" y="0" width="956.8" height="474.6" preserveAspectRatio="none" />
+            </pattern>
+          </defs>
+          <g id="film-move">
+            <g clip-path="url(#strip-clip)">
+              <g id="strip">
+                <rect id="strip-body" x="-1000" y="329.4" width="1267.5" height="474.6" fill="url(#film-pat)" />
+                <image href="assets/film-tip.png" x="267.5" y="329.4" width="421.7" height="474.6" />
+                <g id="frames"></g>
+                <rect id="strip-hit" x="-60000" y="329" width="60700" height="476" fill="transparent" />
+              </g>
+            </g>
+            <image id="canister" href="assets/film-canister.png" x="77" y="229" width="343.9" height="584.3" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- The folded card: appears when the film is gone. Pull its corner to open it. -->
+      <div class="card" id="card" aria-hidden="true">
+        <div class="card-shift" id="card-shift">
+          <div class="card3d" id="card3d">
+            <div class="page-right"></div>
+            <div class="flap" id="flap">
+              <div class="face front">
+                <div class="peel-fold"></div>
+              </div>
+              <div class="face back"></div>
+            </div>
+            <div class="corner-hit" id="corner" role="button" tabindex="0" aria-label="Open the card"></div>
+          </div>
+          <div class="spread" id="spread">
+            <div class="sp-front"></div>
+            <div class="sp-back"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appears when the film has been pulled all the way out. -->
+      <button class="roll-btn" id="roll" type="button" aria-label="Roll the film">Roll<br />the film</button>
+
+      <footer class="bar">
+        <div class="side side-left">
+          <span class="city">Basel, Switzerland</span>
+          <time class="clock" id="clock-basel">14 Nov, 12:00</time>
+        </div>
+
+        <div class="transport">
+          <button class="ctrl ctrl-play" id="play" type="button" aria-label="Play">
+            <svg viewBox="0 0 27 30" aria-hidden="true"><polygon points="0,0 27,15 0,30" /></svg>
+          </button>
+          <button class="ctrl ctrl-pause" id="pause" type="button" aria-label="Pause">
+            <svg viewBox="0 0 18 30" aria-hidden="true">
+              <rect x="0" y="0" width="5.6" height="30" />
+              <rect x="12.4" y="0" width="5.6" height="30" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="side side-right">
+          <time class="clock" id="clock-tbilisi">14 Nov, 15:00</time>
+          <span class="city">Tbilisi, Georgia</span>
+        </div>
+      </footer>
+    </main>
+
+    <audio id="song" src="assets/cornerstone.mp3" preload="auto" loop></audio>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>
